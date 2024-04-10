@@ -23,6 +23,7 @@ set gameOver 0
 
 # Import the various image files -------------------------
 set bomb [image create photo -file images/minesweeperBomb.png]
+set flag [image create photo -file images/minesweeperFlag.png]
 set empty [image create photo -file images/minesweeperEmpty.png]
 set redBomb [image create photo -file images/minesweeperBombRedX.png]
 set zero [image create photo -file images/grey.png]
