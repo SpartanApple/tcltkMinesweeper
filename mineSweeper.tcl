@@ -46,9 +46,6 @@ proc updateButton {x y newImage} {
 	global BUTTON_SIZE
 	global uniqueID
 
-	#set x [expr [scan $xPadded %d]]
-	#set y [expr [scan $yPadded %d]]
-	
 	set xy $x,$y
 
 	grid [button .myButtonUnique$uniqueID$xy  -image $newImage -height $BUTTON_SIZE -width $BUTTON_SIZE]
@@ -63,19 +60,14 @@ proc bombPopulate {x y} {
 		set xPosition [expr {int(rand() * $GRID_SIZE)}]
 		set yPosition [expr {int(rand() * $GRID_SIZE)}]
 
-		#set xPadded [format {%0*s} $NUM_LENGTH $xPosition]
-		#set yPadded [format {%0*s} $NUM_LENGTH $yPosition]
-
 		set xyPosition ${xPosition},${yPosition}
 
-		#set xyPosition $xPosition$yPosition
 		set xy ${x},${y}
 
 		# If position randomly selected is the bomb position, reselect position or if position already has a bomb
 		if {$xyPosition == $xy || $board($xyPosition) == 1} {
 			continue
 		}
-
 
 		# Sets position to be a bomb position
 		set board($xyPosition) 1
@@ -141,22 +133,6 @@ proc checkBombNeighbours {x y} {
 	puts "BBBBBB"
 	puts ""
 
-	#set xP [format {%0*s} $NUM_LENGTH $xPO]
-	#set xN [format {%0*s} $NUM_LENGTH $xNO]
-	#set yP [format {%0*s} $NUM_LENGTH $yPO]
-	#set yN [format {%0*s} $NUM_LENGTH $yNO]
-
-	#set postionAround() []
-
-	#set positionAround(0) $xP$y
-	#set positionAround(1) $xP$yN
-	#set positionAround(2) $x$yN
-	#set positionAround(3) $xN$yN
-	#set positionAround(4) $xN$y
-	#set positionAround(5) $xN$yP
-	#set positionAround(6) $x$yP
-	#set positionAround(7) $xP$yP
-
 	if {$xPO < $GRID_SIZE && $board($xPO,$y) == 1 } {incr bombCount}
 	if {$yNO >= 0 && $xPO < $GRID_SIZE && $board($xPO,$yNO) == 1} {incr bombCount}
 	if {$yNO >= 0 && $board($x,$yNO) == 1} {incr bombCount}
@@ -165,15 +141,6 @@ proc checkBombNeighbours {x y} {
 	if {$xNO >= 0 && $yPO < $GRID_SIZE && $board($xNO,$yPO) == 1} {incr bombCount}
 	if {$yPO < $GRID_SIZE && $board($x,$yPO) == 1} {incr bombCount}
 	if {$xPO < $GRID_SIZE && $yPO < $GRID_SIZE && $board($xPO,$yPO) == 1} {incr bombCount}
-
-	#if {$xP < $GRID_SIZE && $board(${xP},${y}) == 1 } {incr bombCount}
-	#if {$yN >= 0 && $xP < $GRID_SIZE && $board(${xP},${yN}) == 1} {incr bombCount}
-	#if {$yN >= 0 && $board(${x},${yN}) == 1} {incr bombCount}
-	#if {$xN >= 0 && $yN >= 0 && $board(${xN},${yN}) == 1} {incr bombCount}
-	#if {$xN >= 0 && $board(${xN},${y}) == 1} {incr bombCount}
-	#if {$xN >= 0 && $yP < $GRID_SIZE && $board(${xN},${yP}) == 1} {incr bombCount}
-	#if {$yP < $GRID_SIZE && $board(${x},${yP}) == 1} {incr bombCount}
-	#if {$xP < $GRID_SIZE && $yP < $GRID_SIZE && $board(${xP},${yP}) == 1} {incr bombCount}
 
 	set board(${x},${y}) 2
 	return $bombCount
@@ -190,19 +157,12 @@ proc uncoverState {x y} {
 	if {$y < 0} {set $y 0}
 
 	set value [checkBombNeighbours $x $y]
-	#puts $value
 
 	if {$value == 0} {
-		#set xP [expr $x + 1]
-		#set xN [expr $x - 1]
-		#set yP [expr $y + 1]
-		#set yN [expr $y - 1]
-
 		set xPO [expr [expr [scan $x %d]] + 1]
 		set xNO [expr [expr [scan $x %d]] - 1]
 		set yPO [expr [expr [scan $y %d]] + 1]
 		set yNO [expr [expr [scan $y %d]] - 1]
-
 
 		if {$xPO >= $GRID_SIZE} {set $xPO [expr $GRID_SIZE - 1]}
 		if {$yPO >= $GRID_SIZE} {set $yPO [expr $GRID_SIZE - 1]}
@@ -214,15 +174,6 @@ proc uncoverState {x y} {
 		set yP [format {%0*s} $NUM_LENGTH $yPO]
 		set yN [format {%0*s} $NUM_LENGTH $yNO]
 	
-		#if {$xP < $GRID_SIZE && $board(${xP},${y}) != 2 } {uncoverState $xP $y}
-		#if {$yN >= 0 && $xP < $GRID_SIZE && $board(${xP},${yN}) != 2} {uncoverState $xP $yN}
-		#if {$yN >= 0 && $board(${x},${yN}) != 2} {uncoverState $x $yN}
-		#if {$xN >= 0 && $yN >= 0 && $board(${xN},${yN}) != 2} {uncoverState $xN $yN}
-		#if {$xN >= 0 && $board(${xN},${y}) != 2} {uncoverState $xN $y}
-		#if {$xN >= 0 && $yP < $GRID_SIZE && $board(${xN},${yP}) != 2} {uncoverState $xN $yP}
-		#if {$yP < $GRID_SIZE && $board(${x},${yP}) != 2} {uncoverState $x $yP}
-		#if {$xP < $GRID_SIZE && $yP < $GRID_SIZE && $board(${xP},${yP}) != 2} {uncoverState $xP $yP}
-		
 		# To stop infinite recursion, sets current board position to 3
 		set $board(${x},${y}) 3		
 
@@ -308,8 +259,20 @@ menu .menu -tearoff 0
 
 proc rightClick {xPass yPass} {
 	global flag BUTTON_SIZE
-	set x [expr [winfo rootx .]+$xPass]
-	set y [expr [winfo rooty .]+$yPass]
+	# set x [expr [winfo rootx .]+$xPass]
+	# set y [expr [winfo rooty .]+$yPass]
+	puts "\n\nStart of right click"
+	puts [winfo pointerx .]
+	puts [winfo pointery .]
+	puts [winfo rootx .]
+	puts [winfo rooty .]
+	puts $xPass
+	puts $yPass
+	#set x [expr [winfo pointerx .]+$xPass]
+	#set y [expr [winfo pointery .]+$yPass]
+	set x $xPass
+	set y $yPass
+
 	puts "WOW DID RIGHT CLICK WORK????"
 	puts $x
 	puts $y
