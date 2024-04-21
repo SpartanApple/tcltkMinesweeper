@@ -22,29 +22,29 @@ set bombsLeft $NUM_BOMBS
 set gameOver 0
 
 # Import the various image files -------------------------
-set bomb [image create photo -file images/minesweeperBomb.png]
-set flag [image create photo -file images/minesweeperFlag.png]
-set empty [image create photo -file images/minesweeperEmpty.png]
+set bomb    [image create photo -file images/minesweeperBomb.png]
+set flag    [image create photo -file images/minesweeperFlag.png]
+set empty   [image create photo -file images/minesweeperEmpty.png]
 set redBomb [image create photo -file images/minesweeperBombRedX.png]
-set zero [image create photo -file images/grey.png]
+set zero    [image create photo -file images/grey.png]
 
-set one [image create photo -file images/one.png]
-set two [image create photo -file images/two.png]
-set three [image create photo -file images/three.png]
-set four [image create photo -file images/four.png]
-set five [image create photo -file images/five.png]
-set six [image create photo -file images/six.png]
-set seven [image create photo -file images/seven.png]
-set eight [image create photo -file images/eight.png]
+set one     [image create photo -file images/one.png]
+set two     [image create photo -file images/two.png]
+set three   [image create photo -file images/three.png]
+set four    [image create photo -file images/four.png]
+set five    [image create photo -file images/five.png]
+set six     [image create photo -file images/six.png]
+set seven   [image create photo -file images/seven.png]
+set eight   [image create photo -file images/eight.png]
 # --------------------------------------------------------
 
 set firstClick true
 
 set board() []
+set flagBoard() []
 
 proc updateButton {x y newImage} {
-	global BUTTON_SIZE
-	global uniqueID
+	global BUTTON_SIZE uniqueID
 
 	set xy $x,$y
 
@@ -72,9 +72,7 @@ proc bombPopulate {x y} {
 		# Sets position to be a bomb position
 		set board($xyPosition) 1
 		incr bombsPlaced
-####		puts $xyPosition
 	}
-
 }
 
 # Generates a minesweeper board without a bomb at x y
@@ -84,19 +82,13 @@ proc generateBoard {x y} {
 	# Sets entire grid to initalize with no bomb status
 	for {set xCurrent 0} {$xCurrent < $GRID_SIZE} {incr xCurrent} {
 		for {set yCurrent 0} {$yCurrent < $GRID_SIZE} {incr yCurrent} {
-			#set xPadded [format {%0*s} $NUM_LENGTH $xCurrent]
-			#set yPadded [format {%0*s} $NUM_LENGTH $yCurrent]
-
-			#set xy ${xPadded},${yPadded}
 			set xy ${xCurrent},${yCurrent}
-			#set xy $xCurrent$yCurrent
 
 			# 0 == no bomb
 			# 1 == bomb
 			set board($xy) 0
 		}
-		}
-
+	}
 	bombPopulate $x $y	
 }
 
@@ -104,42 +96,18 @@ proc checkBombNeighbours {x y} {
 	global board zero GRID_SIZE NUM_LENGTH
 	set bombCount 0
 
-	puts "Hello"
-	puts $x
-	puts $y
-	puts "Goodbye"
-
 	set xPO [expr [expr [scan $x %d]] + 1]
 	set xNO [expr [expr [scan $x %d]] - 1]
 	set yPO [expr [expr [scan $y %d]] + 1]
 	set yNO [expr [expr [scan $y %d]] - 1]
 	
-	if {$xPO >= $GRID_SIZE} {set xPO [expr $GRID_SIZE - 1]}
-	if {$yPO >= $GRID_SIZE} {set yPO [expr $GRID_SIZE - 1]}
-	if {$xPO >= $GRID_SIZE} {puts "EEEEEEEEEEEEEEEEEEE"}
-	if {$yPO >= $GRID_SIZE} {puts "EEEGGGGGGGGGGGGGGGGGG"}
-	if {$xPO >= $GRID_SIZE} {puts [expr $GRID_SIZE - 1]}
-	if {$yPO >= $GRID_SIZE} {puts [expr $GRID_SIZE - 1]}
-	if {$xPO >= $GRID_SIZE} {puts $xPO}
-	if {$yPO >= $GRID_SIZE} {puts $yPO}
-	if {$xNO < 0} {set $xNO 0}
-	if {$yNO < 0} {set $yNO 0}
-
-	puts "AAAAAA"
-	puts $xPO
-	puts $yPO
-	puts $xNO
-	puts $yNO
-	puts "BBBBBB"
-	puts ""
-
-	if {$xPO < $GRID_SIZE && $board($xPO,$y) == 1 } {incr bombCount}
-	if {$yNO >= 0 && $xPO < $GRID_SIZE && $board($xPO,$yNO) == 1} {incr bombCount}
-	if {$yNO >= 0 && $board($x,$yNO) == 1} {incr bombCount}
-	if {$xNO >= 0 && $yNO >= 0 && $board($xNO,$yNO) == 1} {incr bombCount}
-	if {$xNO >= 0 && $board($xNO,$y) == 1} {incr bombCount}
-	if {$xNO >= 0 && $yPO < $GRID_SIZE && $board($xNO,$yPO) == 1} {incr bombCount}
-	if {$yPO < $GRID_SIZE && $board($x,$yPO) == 1} {incr bombCount}
+	if {$xPO < $GRID_SIZE && $board($xPO,$y) == 1}                        {incr bombCount}
+	if {$yPO < $GRID_SIZE && $board($x,$yPO) == 1}                        {incr bombCount}
+	if {$yNO >= 0         && $board($x,$yNO) == 1}                        {incr bombCount}
+	if {$xNO >= 0         && $board($xNO,$y) == 1}                        {incr bombCount}
+	if {$yNO >= 0         && $xPO < $GRID_SIZE && $board($xPO,$yNO) == 1} {incr bombCount}
+	if {$xNO >= 0         && $yPO < $GRID_SIZE && $board($xNO,$yPO) == 1} {incr bombCount}
+	if {$xNO >= 0         && $yNO >= 0         && $board($xNO,$yNO) == 1} {incr bombCount}
 	if {$xPO < $GRID_SIZE && $yPO < $GRID_SIZE && $board($xPO,$yPO) == 1} {incr bombCount}
 
 	set board(${x},${y}) 2
@@ -217,7 +185,6 @@ proc lostState {xPressed yPressed} {
 			}
 		}	
 	}
-
 	updateButton $xPressed $yPressed $redBomb
 }
 
@@ -248,40 +215,35 @@ proc buttonClicked {x y} {
 	if {$board($xy) == 0} {
 		uncoverState $x $y
 	}
-
 }
 
 menu .menu -tearoff 0 
 .menu add command -label "Option 1"
 .menu add command -label "Option 2"
 
-
-
 proc rightClick {xPass yPass} {
-	global flag BUTTON_SIZE
-	# set x [expr [winfo rootx .]+$xPass]
-	# set y [expr [winfo rooty .]+$yPass]
-	puts "\n\nStart of right click"
-	puts [winfo pointerx .]
-	puts [winfo pointery .]
-	puts [winfo rootx .]
-	puts [winfo rooty .]
-	puts $xPass
-	puts $yPass
-	#set x [expr [winfo pointerx .]+$xPass]
-	#set y [expr [winfo pointery .]+$yPass]
-	set x $xPass
-	set y $yPass
+	global flag BUTTON_SIZE bombsLeft flagBoard empty gameOver
+	puts "Right click"
+	puts $flagBoard($xPass,$yPass)
 
-	puts "WOW DID RIGHT CLICK WORK????"
-	puts $x
-	puts $y
-	set x [expr $x / $BUTTON_SIZE]
-	set y [expr $y / $BUTTON_SIZE]
-	puts $x
-	puts $y
-	puts "End--------"
-	updateButton $x $y $flag
+	if {$gameOver !=  1} {
+		if {$flagBoard($xPass,$yPass) == 1} {
+			set flagBoard($xPass,$yPass) 0
+
+			set bombsLeft [incr $bombsLeft]
+			puts $bombsLeft
+
+			updateButton $xPass $yPass $empty
+		
+		} else {
+			set flagBoard($xPass,$yPass) 1
+
+			set bombsLeft [expr $bombsLeft -1]
+			puts $bombsLeft
+
+			updateButton $xPass $yPass $flag
+		}
+	}
 }
 
 proc initGrid {} {
@@ -289,6 +251,7 @@ proc initGrid {} {
 	global flag bomb empty
 	global one two three four five six seven eight
 	global bombsLeft
+	global flagBoard
 
 	grid [label .locationLable  -text "" -textvar locationText]
 
@@ -300,28 +263,22 @@ proc initGrid {} {
 			#set xy $xPadded$yPadded
 
 			set xy ${xx},${yy}
+			set flagBoard($xx,$yy) 0
+
+			set b .myButton${xx},${yy}
 	
-			grid [button .myButton$xy  -image $empty -height $BUTTON_SIZE -width $BUTTON_SIZE -command "buttonClicked $xx $yy"]
-			#grid [button .myButton$xy  -image $empty -height $BUTTON_SIZE -width $BUTTON_SIZE -command "buttonClicked $xPadded $yPadded"]
-			#grid [button .myButton$xy  -image $empty -height $BUTTON_SIZE -width $BUTTON_SIZE]
+			grid [button $b  -image $empty -height $BUTTON_SIZE -width $BUTTON_SIZE -command "buttonClicked $xx $yy"]
+			
+			bind $b <Button-3> "rightClick $xx $yy"
 
-			bind .myButton$xy <Button-3> {
-				rightClick %X %Y
-				puts %X
-				puts %Y
-				puts %x
-				puts %y
-			}
-
-			#bind .myButton$xy <Button-1> {
-			#	 buttonClicked %x %y
-			#}
-
-			grid .myButton$xy -row $yy -column $xx
+			grid $b -row $yy -column $xx
 		}
 	}
-	label .l -text "Bombs Left: $bombsLeft"
-	grid .l -row $GRID_SIZE -column 0 -columnspan $GRID_SIZE
+	label .lt -text "Bombs Left: "
+	label .l -textvariable bombsLeft
+	#label .l -textvariable "Bombs Left: $bombsLeft"
+	grid .lt -row $GRID_SIZE -column 0 -columnspan $GRID_SIZE
+	grid .l -row $GRID_SIZE -column 4 -columnspan $GRID_SIZE
 }
 
 initGrid
